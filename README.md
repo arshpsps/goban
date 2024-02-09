@@ -1,2 +1,2 @@
 ### goban
-Simple kanban board app written in GoLang 
+Simple kanban board app written in Go
