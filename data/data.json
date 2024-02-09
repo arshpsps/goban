@@ -1,0 +1,21 @@
+{
+    "projects": [
+        {
+            "name": "project1",
+            "created_on": 20240209,
+            "boards": [
+                {
+                    "name": "board1",
+                    "cards": [
+                        {
+                            "title": "card1",
+                            "description": "this is the first card",
+                            "status": 1,
+                            "tags": ["tag1"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
