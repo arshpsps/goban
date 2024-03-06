@@ -2,7 +2,6 @@ package kanban
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	// "encoding/json"
 )
