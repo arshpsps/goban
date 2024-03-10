@@ -48,7 +48,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	s := "Which option to select, uwu?\n\n\n"
+	s := "Which option to select, uwu?\n\n"
 	for i, choice := range m.choices {
 		cursor := " "
 		if m.cursor == i {
