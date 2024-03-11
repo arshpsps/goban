@@ -6,28 +6,35 @@ import (
 	"os"
 )
 
-var (
-    fileLocation string = "goban/data/data.json"
-)
+var fileLocation string = "../../data/data.json"
 
-func fileOpen() *os.File{
-    file, err := os.Open(fileLocation)
-    if err != nil {
-        fmt.Errorf("Error: %v", err)
-        os.Exit(1)
-    }
-    return file
+func fileOpen() *os.File {
+	file, err := os.Open(fileLocation)
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		os.Exit(1)
+	}
+	return file
 }
 
-
 func Start(args []string) {
+	var fData []byte
+	file := fileOpen()
+	a, err := file.Read(fData)
+	if err != nil {
+		fmt.Printf("file reading fkked up: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Println(a)
+	fmt.Println(fData)
+
 	switch args[0] {
 
 	case "create":
 		if len(args) != 2 {
 			fmt.Println("insufficient args")
 		} else {
-			create(args[1])
+			create(string(fData))
 		}
 
 	default:
@@ -38,5 +45,5 @@ func Start(args []string) {
 func create(arg string) {
 	fmt.Println("create called")
 	fmt.Println(arg)
-	dataHandle.JsonRead(data)
+	dataHandle.JsonRead(arg)
 }
