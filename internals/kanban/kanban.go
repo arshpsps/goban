@@ -3,34 +3,22 @@ package kanban
 import (
 	"fmt"
 	"goban/internals/dataHandle"
+	"os"
 )
 
-var data string = `{
-    "projects": [
-        {
-            "name": "project1",
-            "created_on": 20240209,
-            "boards": [
+var (
+    fileLocation string = "goban/data/data.json"
+)
 
-                {
-                    "name": "board1",
-                    "cards": [
-                        {
-                            "title": "card1",
-
-                            "description": "this is the first card",
-                            "status": 1,
-                            "tags": ["tag1"]
-                        }
-                    ]
-                }
-
-            ]
-
-        }
-    ]
+func fileOpen() *os.File{
+    file, err := os.Open(fileLocation)
+    if err != nil {
+        fmt.Errorf("Error: %v", err)
+        os.Exit(1)
+    }
+    return file
 }
-`
+
 
 func Start(args []string) {
 	switch args[0] {
