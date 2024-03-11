@@ -3,20 +3,24 @@ package bblt
 import (
 	// "github.com/charmbracelet/bubbles/list"
 	"fmt"
+	"goban/internals/dataHandle"
+	"goban/internals/kanban"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+var data dataHandle.JsonData = kanban.GrabJsonObj()
+
 type model struct {
-	choices  []string
+	choices  []dataHandle.Project
 	cursor   int
 	selected int
 }
 
 func initialModel() model {
 	return model{
-		choices:  []string{"item1", "item2", "uwu", "uwuwuwuwuwu"},
+		choices:  data.Projects,
 		selected: 0,
 	}
 }
@@ -41,7 +45,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter", " ":
-			m.selected = m.cursor
+            
 		}
 	}
 	return m, nil
