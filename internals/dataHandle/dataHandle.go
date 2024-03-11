@@ -2,7 +2,7 @@ package dataHandle
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 )
 
 type Card struct {
@@ -27,14 +27,11 @@ type JsonData struct {
 	Projects []Project
 }
 
-func JsonRead(data string) (JsonData, error) {
+func JsonRead(data string) JsonData {
 	var jsonData JsonData
 	if !json.Valid([]byte(data)) {
-		fmt.Println("invalid JSON:", data)
-		// return *new(JsonData), errors.New(`invalid JSON:, ${data}`)
-		return *new(JsonData), fmt.Errorf("invalid JSON:, %s", data)
+		log.Fatalf("invalid JSON: %s", data)
 	}
 	json.Unmarshal([]byte(data), &jsonData)
-	fmt.Println(jsonData.Projects[0].Boards[0].Cards[0].Tags[0])
-	return jsonData, nil
+	return jsonData
 }
