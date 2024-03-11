@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"goban/internals/dataHandle"
 	"os"
+	"strings"
 )
 
-var fileLocation string = "../../data/data.json"
+var fileLocation string = "./data/data.json"
 
 func fileOpen() *os.File {
-	file, err := os.Open(fileLocation)
+	file, err := os.OpenFile(fileLocation, os.O_RDONLY, 0666)
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
 		os.Exit(1)
@@ -18,15 +19,14 @@ func fileOpen() *os.File {
 }
 
 func Start(args []string) {
-	var fData []byte
+	fData := make([]byte, 4096)
 	file := fileOpen()
-	a, err := file.Read(fData)
+	_, err := file.Read(fData)
 	if err != nil {
 		fmt.Printf("file reading fkked up: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Println(a)
-	fmt.Println(fData)
+	data := strings.Trim(string(fData), "\n \x00")
 
 	switch args[0] {
 
@@ -34,7 +34,7 @@ func Start(args []string) {
 		if len(args) != 2 {
 			fmt.Println("insufficient args")
 		} else {
-			create(string(fData))
+			create(data)
 		}
 
 	default:
