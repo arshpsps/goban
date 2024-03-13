@@ -47,12 +47,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.cursor < len(m.choices)-1 {
 				m.cursor++
 			}
+		case "enter", " ":
 			for _, p := range data.Projects {
 				if p.Name == m.choices[m.selected].Name {
 					selcProj = p
+					break
 				}
 			}
-		case "enter", " ":
 		}
 	}
 	return m, nil
@@ -71,7 +72,7 @@ func (m model) View() string {
 			selected = "x"
 		}
 
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, selected, choice)
+		s += fmt.Sprintf("%s [%s] %s\n", cursor, selected, choice.Name)
 	}
 
 	s += "\nPress q to quit.\n"
