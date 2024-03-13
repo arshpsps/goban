@@ -10,7 +10,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var data dataHandle.JsonData = kanban.GrabJsonObj()
+var (
+	data     dataHandle.JsonData = kanban.GrabJsonObj()
+	selcProj dataHandle.Project
+)
 
 type model struct {
 	choices  []dataHandle.Project
@@ -44,8 +47,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.cursor < len(m.choices)-1 {
 				m.cursor++
 			}
+			for _, p := range data.Projects {
+				if p.Name == m.choices[m.selected].Name {
+					selcProj = p
+				}
+			}
 		case "enter", " ":
-            
 		}
 	}
 	return m, nil
