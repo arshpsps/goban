@@ -13,18 +13,17 @@ import (
 var (
 	data     dataHandle.JsonData = kanban.GrabJsonObj()
 	selcProj dataHandle.Project
+	selcView int = 0
 )
 
 type model struct {
-	choices  []dataHandle.Project
-	cursor   int
-	selected int
+	choices []dataHandle.Project
+	cursor  int
 }
 
 func initialModel() model {
 	return model{
-		choices:  data.Projects,
-		selected: 0,
+		choices: data.Projects,
 	}
 }
 
@@ -49,8 +48,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "enter", " ":
 			for _, p := range data.Projects {
-				if p.Name == m.choices[m.selected].Name {
+				if m.choices[m.cursor].Name == p.Name {
 					selcProj = p
+					selcView = 0
 					break
 				}
 			}
@@ -61,18 +61,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	s := "Which option to select, uwu?\n\n"
-	for i, choice := range m.choices {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">"
-		}
+	switch selcView {
 
-		selected := " "
-		if m.selected == i {
-			selected = "x"
-		}
+	case 0:
+		for i, choice := range m.choices {
+			cursor := " "
+			if m.cursor == i {
+				cursor = ">"
+			}
 
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, selected, choice.Name)
+			s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
+		}
+	case 1:
+
 	}
 
 	s += "\nPress q to quit.\n"
