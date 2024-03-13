@@ -17,13 +17,14 @@ var (
 )
 
 type model struct {
-	choices []dataHandle.Project
-	cursor  int
+	projectList []dataHandle.Project
+	project     dataHandle.Project
+	cursor      int
 }
 
 func initialModel() model {
 	return model{
-		choices: data.Projects,
+		projectList: data.Projects,
 	}
 }
 
@@ -43,12 +44,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down", "j":
-			if m.cursor < len(m.choices)-1 {
+			if m.cursor < len(m.projectList)-1 {
 				m.cursor++
 			}
 		case "enter", " ":
 			for _, p := range data.Projects {
-				if m.choices[m.cursor].Name == p.Name {
+				if m.projectList[m.cursor].Name == p.Name {
 					selcProj = p
 					selcView = 0
 					break
@@ -64,7 +65,7 @@ func (m model) View() string {
 	switch selcView {
 
 	case 0:
-		for i, choice := range m.choices {
+		for i, choice := range m.projectList {
 			cursor := " "
 			if m.cursor == i {
 				cursor = ">"
