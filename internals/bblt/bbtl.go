@@ -61,10 +61,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	s := "Which option to select, uwu?\n\n"
+	s := ""
 	switch selcView {
 
 	case 0:
+		s += "Which option to select, uwu?\n\n"
 		for i, choice := range m.projectList {
 			cursor := " "
 			if m.cursor == i {
