@@ -10,16 +10,17 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var (
-	data     dataHandle.JsonData = kanban.GrabJsonObj()
-	selcProj dataHandle.Project
-	selcView int = 0
-)
+var data dataHandle.JsonData = kanban.GrabJsonObj()
 
 type model struct {
 	projectList []dataHandle.Project
 	project     dataHandle.Project
 	cursor      int
+}
+
+type projModel struct {
+	project   dataHandle.Project
+	boardList []dataHandle.Board
 }
 
 func initialModel() model {
@@ -50,10 +51,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter", " ":
 			for _, p := range data.Projects {
 				if m.projectList[m.cursor].Name == p.Name {
-					selcProj = p
-					selcView = 1
-					m.cursor = 0
-					break
+					n := projModel{
+						project: p,
+					}
+					return n, nil
 				}
 			}
 		}
@@ -62,29 +63,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	s := ""
-	switch selcView {
-
-	case 0:
-		s += "Which option to select, uwu?\n\n"
-		for i, choice := range m.projectList {
-			cursor := " "
-			if m.cursor == i {
-				cursor = ">"
-			}
-
-			s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
+	s := "Which option to select, uwu?\n\n"
+	for i, choice := range m.projectList {
+		cursor := " "
+		if m.cursor == i {
+			cursor = ">"
 		}
-	case 1:
-		s += "Boards\n\n"
-		for i, choice := range selcProj.Boards {
-			cursor := " "
-			if m.cursor == i {
-				cursor = ">"
-			}
-			s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
-		}
-
+		s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
 	}
 
 	s += "\nPress q to quit.\n"
