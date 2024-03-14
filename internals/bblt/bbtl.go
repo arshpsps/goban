@@ -33,6 +33,14 @@ func (m model) Init() tea.Cmd {
 	return nil
 }
 
+func (n projModel) Init() tea.Cmd {
+	return nil
+}
+
+func (n projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	return n, nil
+}
+
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -51,8 +59,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter", " ":
 			for _, p := range data.Projects {
 				if m.projectList[m.cursor].Name == p.Name {
+
 					n := projModel{
-						project: p,
+						project:   p,
+						boardList: p.Boards,
 					}
 					return n, nil
 				}
@@ -60,6 +70,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 	return m, nil
+}
+
+func (n projModel) View() string {
+	s := ""
+
+	return s
 }
 
 func (m model) View() string {
