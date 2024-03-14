@@ -51,7 +51,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			for _, p := range data.Projects {
 				if m.projectList[m.cursor].Name == p.Name {
 					selcProj = p
-					selcView = 0
+					selcView = 1
+					m.cursor = 0
 					break
 				}
 			}
@@ -75,6 +76,14 @@ func (m model) View() string {
 			s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
 		}
 	case 1:
+		s += "Boards\n\n"
+		for i, choice := range selcProj.Boards {
+			cursor := " "
+			if m.cursor == i {
+				cursor = ">"
+			}
+			s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
+		}
 
 	}
 
