@@ -21,6 +21,7 @@ type model struct {
 type projModel struct {
 	boardList []dataHandle.Board
 	project   dataHandle.Project
+	cursor    int
 }
 
 func initialModel() model {
@@ -33,12 +34,39 @@ func (m model) Init() tea.Cmd {
 	return nil
 }
 
-func (n projModel) Init() tea.Cmd {
+func (m projModel) Init() tea.Cmd {
 	return nil
 }
 
-func (n projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return n, nil
+func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+
+		case "up", "k":
+			if m.cursor > 0 {
+				m.cursor--
+			}
+		case "down", "j":
+			if m.cursor < len(m.boardList)-1 {
+				m.cursor++
+			}
+		case "enter", " ":
+			for _, p := range data.Projects {
+				if m.boardList[m.cursor].Name == p.Name {
+
+					n := projModel{
+						project:   p,
+						boardList: p.Boards,
+					}
+					return n, nil
+				}
+			}
+		}
+	}
+	return m, nil
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
