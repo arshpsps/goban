@@ -19,8 +19,8 @@ type model struct {
 }
 
 type projModel struct {
-	project   dataHandle.Project
 	boardList []dataHandle.Board
+	project   dataHandle.Project
 }
 
 func initialModel() model {
