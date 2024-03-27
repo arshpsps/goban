@@ -2,7 +2,7 @@
 
 > Simple kanban board app written in Go.
 
-This app uses [bubbletea](https://github.com/charmbracelet/bubbletea) for TUI. (bubbletea is sick)
+This app uses [bubbletea](https://github.com/charmbracelet/bubbletea) for TUI. (bubbletea is sick (and annoying))
 
 ---
 
