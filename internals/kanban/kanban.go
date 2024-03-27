@@ -7,7 +7,11 @@ import (
 	"strings"
 )
 
-var fileLocation string = "./data/data.json"
+var (
+	fileLocation string   = "./data/data.json"
+	fData        []byte   = make([]byte, 4096)
+	file         *os.File = fileOpen()
+)
 
 func fileOpen() *os.File {
 	file, err := os.OpenFile(fileLocation, os.O_RDONLY, 0666)
@@ -19,8 +23,6 @@ func fileOpen() *os.File {
 }
 
 func GrabJsonObj() dataHandle.JsonData {
-	fData := make([]byte, 4096)
-	file := fileOpen()
 	_, err := file.Read(fData)
 	if err != nil {
 		fmt.Printf("file reading fkked up: %v\n", err)
