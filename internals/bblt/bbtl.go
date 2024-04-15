@@ -24,6 +24,12 @@ type projModel struct {
 	cursor    int
 }
 
+type boardModel struct {
+	cardList []dataHandle.Card
+	board    dataHandle.Board
+	cursot   int
+}
+
 func initialModel() model {
 	return model{
 		projectList: data.Projects,
@@ -35,6 +41,10 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m projModel) Init() tea.Cmd {
+	return nil
+}
+
+func (m boardModel) Init() tea.Cmd {
 	return nil
 }
 
@@ -54,12 +64,12 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter", " ":
-			for _, p := range data.Projects {
+			for _, p := range m.boardList {
 				if m.boardList[m.cursor].Name == p.Name {
 
-					n := projModel{
-						project:   p,
-						boardList: p.Boards,
+					n := boardModel{
+						board:   p,
+						cardList: p.Cards,
 					}
 					return n, nil
 				}
@@ -100,8 +110,26 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m boardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+    return m, nil;
+}
+
+func (n boardModel) View() string {
+    s := ""
+    return s
+}
+
 func (n projModel) View() string {
-	s := ""
+	s := "Which option to select, uwu?\n\n"
+	for i, choice := range n.boardList {
+		cursor := " "
+		if n.cursor == i {
+			cursor = ">"
+		}
+		s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
+	}
+
+	s += "\nPress q to quit.\n"
 
 	return s
 }
