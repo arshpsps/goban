@@ -2,6 +2,7 @@ package dataHandle
 
 import (
 	"fmt"
+	"log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -35,10 +36,12 @@ type JsonData struct {
 	Projects []Project
 }
 
-func Conndb() {
+func Conndb() error {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		fmt.Errorf("Error: %s", err)
+		log.Fatalf("Error: %s", err)
 	}
 	fmt.Println("uwu")
+	db.AutoMigrate(Card{})
+	return nil
 }
