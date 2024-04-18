@@ -1,25 +1,33 @@
 package dataHandle
 
 import (
-	"encoding/json"
-	"log"
+	"fmt"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
+var dsn string = "root:@tcp(127.0.0.1:3306)/goban?charset=utf8mb4&parseTime=True&loc=Local"
+
 type Card struct {
+	gorm.Model
 	Title       string
 	Description string
-	Tags        []string
+	cid         int
 	Status      int
 }
 
 type Board struct {
+	gorm.Model
 	Name  string
 	Cards []Card
+	bid   int
 }
 
 type Project struct {
+	gorm.Model
 	Name       string
-	Boards     []Board
+	pid        int
 	Created_on int
 }
 
@@ -27,11 +35,10 @@ type JsonData struct {
 	Projects []Project
 }
 
-func JsonRead(data string) JsonData {
-	var jsonData JsonData
-	if !json.Valid([]byte(data)) {
-		log.Fatalf("invalid JSON: %s", data)
+func Conndb() {
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		fmt.Errorf("Error: %s", err)
 	}
-	json.Unmarshal([]byte(data), &jsonData)
-	return jsonData
+	fmt.Println("uwu")
 }
