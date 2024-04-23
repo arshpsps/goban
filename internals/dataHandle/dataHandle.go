@@ -42,9 +42,10 @@ type dbconn struct {
 	card     Card
 }
 
-func Conndb() *gorm.DB {
+func Conndb() dbconn {
 	var err error
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db := dbconn{}
+	db.db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
@@ -71,6 +72,6 @@ func (dbconn *dbconn) CreateTables() {
 func (dbconn *dbconn) GetProjects() {
 	dbconn.db.Find(&dbconn.projects)
 	for _, proj := range dbconn.projects {
-		fmt.Print(proj.Name)
+		fmt.Println(proj.Name)
 	}
 }

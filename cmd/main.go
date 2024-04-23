@@ -6,5 +6,6 @@ import (
 
 func main() {
 	// bblt.Run()
-	dataHandle.Conndb()
+	db := dataHandle.Conndb()
+	db.GetProjects()
 }
