@@ -14,26 +14,22 @@ type Card struct {
 	gorm.Model
 	Title       string
 	Description string
-	cid         int
+	ID          uint
+	BoardID     uint `gorm:"foreignKey"`
 	Status      int
 }
 
 type Board struct {
 	gorm.Model
-	Name  string
-	Cards []Card
-	bid   int
+	Name      string
+	ID        uint
+	ProjectID uint `gorm:"foreignKey"`
 }
 
 type Project struct {
 	gorm.Model
-	Name       string
-	pid        int
-	Created_on int
-}
-
-type JsonData struct {
-	Projects []Project
+	Name string
+	ID   uint
 }
 
 func Conndb() error {
@@ -42,6 +38,8 @@ func Conndb() error {
 		log.Fatalf("Error: %s", err)
 	}
 	fmt.Println("uwu")
+	db.AutoMigrate(Project{})
+	db.AutoMigrate(Board{})
 	db.AutoMigrate(Card{})
 	return nil
 }

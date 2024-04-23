@@ -1,9 +1,10 @@
 package main
 
 import (
-	"goban/internals/bblt"
+	"goban/internals/dataHandle"
 )
 
 func main() {
-	bblt.Run()
+	// bblt.Run()
+	dataHandle.Conndb()
 }
