@@ -26,7 +26,12 @@ type projModel struct {
 type boardModel struct {
 	cardList []dataHandle.Card
 	board    dataHandle.Board
-	cursot   int
+	cursor   int
+}
+
+type cardModel struct {
+	card   dataHandle.Card
+	cursor int
 }
 
 func initialModel() model {
@@ -45,6 +50,10 @@ func (m projModel) Init() tea.Cmd {
 }
 
 func (m boardModel) Init() tea.Cmd {
+	return nil
+}
+
+func (m cardModel) Init() tea.Cmd {
 	return nil
 }
 
@@ -111,11 +120,78 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m boardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+
+		case "up", "k":
+			if m.cursor > 0 {
+				m.cursor--
+			}
+		case "down", "j":
+			if m.cursor < len(m.cardList)-1 {
+				m.cursor++
+			}
+		case "enter", " ":
+			for _, p := range m.cardList {
+				if m.cardList[m.cursor].Title == p.Title {
+
+					n := cardModel{
+						card: p,
+					}
+					return n, nil
+				}
+			}
+		}
+	}
+	return m, nil
+}
+
+func (m cardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return m, tea.Quit
+
+		case "up", "k":
+			if m.cursor > 0 {
+				m.cursor--
+			}
+		case "down", "j":
+			if m.cursor < 2 {
+				m.cursor++
+			}
+			// case "enter", " ":
+			// 	for _, p := range m.cardList {
+			// 		if m.cardList[m.cursor].Title == p.Title {
+			//
+			// 			n := projModel{
+			// 				// project:   p,
+			// 				boardList: db.GetBoardsInProject(int(p.ID)),
+			// 			}
+			// 			return n, nil
+			// 		}
+			// 	}
+		}
+	}
 	return m, nil
 }
 
 func (n boardModel) View() string {
-	s := ""
+	s := "Which option to select, uwu?\n\n"
+	for i, choice := range n.cardList {
+		cursor := " "
+		if n.cursor == i {
+			cursor = ">"
+		}
+		s += fmt.Sprintf("%s %s\n", cursor, choice.Title)
+	}
+
+	s += "\nPress q to quit.\n"
+
 	return s
 }
 
@@ -143,6 +219,29 @@ func (m model) View() string {
 		}
 		s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
 	}
+
+	s += "\nPress q to quit.\n"
+
+	return s
+}
+
+func (m cardModel) View() string {
+	s := "Which option to select, uwu?\n\n"
+	cursor := " "
+	if m.cursor == 0 {
+		cursor = ">"
+	}
+	s += fmt.Sprintf("%s %s\n", cursor, m.card.Title)
+	cursor = " "
+	if m.cursor == 1 {
+		cursor = ">"
+	}
+	s += fmt.Sprintf("%s %s\n", cursor, m.card.Description)
+	cursor = " "
+	if m.cursor == 2 {
+		cursor = ">"
+	}
+	s += fmt.Sprintf("%s %s\n", cursor, string(rune(m.card.Status)))
 
 	s += "\nPress q to quit.\n"
 
