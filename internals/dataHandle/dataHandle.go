@@ -32,13 +32,13 @@ type Project struct {
 	ID   uint
 }
 
-type dbconn struct {
+type DBConn struct {
 	db *gorm.DB
 }
 
-func Conndb() dbconn {
+func Conndb() DBConn {
 	var err error
-	db := dbconn{}
+	db := DBConn{}
 	db.db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error: %s", err)
@@ -47,7 +47,7 @@ func Conndb() dbconn {
 	return db
 }
 
-func (dbconn *dbconn) CreateTables() {
+func (dbconn *DBConn) CreateTables() {
 	var err error
 	err = dbconn.db.AutoMigrate(Project{})
 	if err != nil {
@@ -63,7 +63,7 @@ func (dbconn *dbconn) CreateTables() {
 	}
 }
 
-func (dbconn *dbconn) GetAllProjects() []Project {
+func (dbconn *DBConn) GetAllProjects() []Project {
 	var projects []Project
 	dbconn.db.Find(&projects)
 	for _, proj := range projects {
@@ -72,20 +72,32 @@ func (dbconn *dbconn) GetAllProjects() []Project {
 	return projects
 }
 
-func (dbconn *dbconn) GetProject(id int) Project {
+func (dbconn *DBConn) GetProject(id int) Project {
 	var project Project
 	dbconn.db.First(&project, id)
 	return project
 }
 
-func (dbconn *dbconn) GetBoard(id int) Board {
+func (dbconn *DBConn) GetBoard(id int) Board {
 	var board Board
 	dbconn.db.First(&board, id)
 	return board
 }
 
-func (dbconn *dbconn) GetCard(id int) Card {
+func (dbconn *DBConn) GetCard(id int) Card {
 	var card Card
 	dbconn.db.First(&card, id)
 	return card
+}
+
+func (dbconn *DBConn) GetBoardsInProject(id int) []Board {
+	var boards []Board
+	dbconn.db.Model(&boards).Where("project_id = ?", id)
+	return boards
+}
+
+func (dbconn *DBConn) GetCardsInProject(id int) []Card {
+	var cards []Card
+	dbconn.db.Model(&cards).Where("board_id = ?", id)
+	return cards
 }

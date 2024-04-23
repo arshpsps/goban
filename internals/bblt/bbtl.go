@@ -4,13 +4,12 @@ import (
 	// "github.com/charmbracelet/bubbles/list"
 	"fmt"
 	"goban/internals/dataHandle"
-	"goban/internals/kanban"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var data dataHandle.JsonData = kanban.GrabJsonObj()
+var db dataHandle.DBConn
 
 type model struct {
 	projectList []dataHandle.Project
@@ -31,8 +30,9 @@ type boardModel struct {
 }
 
 func initialModel() model {
+	db = dataHandle.Conndb()
 	return model{
-		projectList: data.Projects,
+		projectList: db.GetAllProjects(),
 	}
 }
 
@@ -68,8 +68,8 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.boardList[m.cursor].Name == p.Name {
 
 					n := boardModel{
-						board:   p,
-						cardList: p.Cards,
+						board:    p,
+						cardList: db.GetCardsInProject(int(p.ID)),
 					}
 					return n, nil
 				}
@@ -95,12 +95,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter", " ":
-			for _, p := range data.Projects {
+			for _, p := range m.projectList {
 				if m.projectList[m.cursor].Name == p.Name {
 
 					n := projModel{
 						project:   p,
-						boardList: p.Boards,
+						boardList: db.GetBoardsInProject(int(p.ID)),
 					}
 					return n, nil
 				}
@@ -111,12 +111,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m boardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    return m, nil;
+	return m, nil
 }
 
 func (n boardModel) View() string {
-    s := ""
-    return s
+	s := ""
+	return s
 }
 
 func (n projModel) View() string {
