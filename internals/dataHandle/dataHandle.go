@@ -92,12 +92,12 @@ func (dbconn *DBConn) GetCard(id int) Card {
 
 func (dbconn *DBConn) GetBoardsInProject(id int) []Board {
 	var boards []Board
-	dbconn.db.Model(&boards).Where("project_id = ?", id)
+	dbconn.db.Model(&boards).Where("project_id = ?", id).Find(&boards)
 	return boards
 }
 
 func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 	var cards []Card
-	dbconn.db.Model(&cards).Where("board_id = ?", id)
+	dbconn.db.Model(&cards).Where("board_id = ?", id).Find(&cards)
 	return cards
 }
