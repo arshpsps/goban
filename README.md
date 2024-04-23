@@ -6,4 +6,6 @@ This app uses [bubbletea](https://github.com/charmbracelet/bubbletea) for TUI. (
 
 ---
 
-Might wanna look into [cobra](https://pkg.go.dev/github.com/spf13/cobra)
+~Might wanna look into [cobra](https://pkg.go.dev/github.com/spf13/cobra)~
+
+A cobra based approach wouldn't really work unless the app runs as a service or the like.
