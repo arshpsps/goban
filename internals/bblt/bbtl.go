@@ -225,7 +225,7 @@ func (m model) View() string {
 	return s
 }
 
-func (m cardModel) View() string {
+func (m cardModel) View() string { // works actually
 	s := "Which option to select, uwu?\n\n"
 	cursor := " "
 	if m.cursor == 0 {
