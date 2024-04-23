@@ -32,14 +32,45 @@ type Project struct {
 	ID   uint
 }
 
-func Conndb() error {
+type dbconn struct {
+	db       *gorm.DB
+	project  Project
+	cards    []Card
+	boards   []Board
+	projects []Project
+	board    Board
+	card     Card
+}
+
+func Conndb() *gorm.DB {
+	var err error
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
-	fmt.Println("uwu")
-	db.AutoMigrate(Project{})
-	db.AutoMigrate(Board{})
-	db.AutoMigrate(Card{})
-	return nil
+	fmt.Println("Connection Successful!")
+	return db
+}
+
+func (dbconn *dbconn) CreateTables() {
+	var err error
+	err = dbconn.db.AutoMigrate(Project{})
+	if err != nil {
+		log.Fatalf("Failed to migrate structs to tables: %s", err)
+	}
+	err = dbconn.db.AutoMigrate(Board{})
+	if err != nil {
+		log.Fatalf("Failed to migrate structs to tables: %s", err)
+	}
+	err = dbconn.db.AutoMigrate(Card{})
+	if err != nil {
+		log.Fatalf("Failed to migrate structs to tables: %s", err)
+	}
+}
+
+func (dbconn *dbconn) GetProjects() {
+	dbconn.db.Find(&dbconn.projects)
+	for _, proj := range dbconn.projects {
+		fmt.Print(proj.Name)
+	}
 }
