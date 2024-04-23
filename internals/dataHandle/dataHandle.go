@@ -33,13 +33,7 @@ type Project struct {
 }
 
 type dbconn struct {
-	db       *gorm.DB
-	project  Project
-	cards    []Card
-	boards   []Board
-	projects []Project
-	board    Board
-	card     Card
+	db *gorm.DB
 }
 
 func Conndb() dbconn {
@@ -69,9 +63,29 @@ func (dbconn *dbconn) CreateTables() {
 	}
 }
 
-func (dbconn *dbconn) GetProjects() {
-	dbconn.db.Find(&dbconn.projects)
-	for _, proj := range dbconn.projects {
+func (dbconn *dbconn) GetAllProjects() []Project {
+	var projects []Project
+	dbconn.db.Find(&projects)
+	for _, proj := range projects {
 		fmt.Println(proj.Name)
 	}
+	return projects
+}
+
+func (dbconn *dbconn) GetProject(id int) Project {
+	var project Project
+	dbconn.db.First(&project, id)
+	return project
+}
+
+func (dbconn *dbconn) GetBoard(id int) Board {
+	var board Board
+	dbconn.db.First(&board, id)
+	return board
+}
+
+func (dbconn *dbconn) GetCard(id int) Card {
+	var card Card
+	dbconn.db.First(&card, id)
+	return card
 }
