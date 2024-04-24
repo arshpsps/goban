@@ -35,7 +35,7 @@ type cardModel struct {
 }
 
 func initialModel() model {
-	db = dataHandle.Conndb()
+	db = dataHandle.NewConndb()
 	return model{
 		projectList: db.GetAllProjects(),
 	}

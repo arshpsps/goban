@@ -36,7 +36,7 @@ type DBConn struct {
 	db *gorm.DB
 }
 
-func Conndb() DBConn {
+func NewConndb() DBConn {
 	var err error
 	db := DBConn{}
 	db.db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
