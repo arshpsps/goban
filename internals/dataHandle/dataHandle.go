@@ -66,9 +66,6 @@ func (dbconn *DBConn) CreateTables() {
 func (dbconn *DBConn) GetAllProjects() []Project {
 	var projects []Project
 	dbconn.db.Find(&projects)
-	for _, proj := range projects {
-		fmt.Println(proj.Name)
-	}
 	return projects
 }
 

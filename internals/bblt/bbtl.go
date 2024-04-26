@@ -26,16 +26,17 @@ type projModel struct {
 type boardModel struct {
 	cardList []dataHandle.Card
 	board    dataHandle.Board
+	project  projModel
 	cursor   int
 }
 
 type cardModel struct {
 	card   dataHandle.Card
+	board  boardModel
 	cursor int
 }
 
 func initialModel() model {
-	db = dataHandle.NewConndb()
 	return model{
 		projectList: db.GetAllProjects(),
 	}
@@ -78,11 +79,14 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 					n := boardModel{
 						board:    p,
+						project:  m,
 						cardList: db.GetCardsInProject(int(p.ID)),
 					}
 					return n, nil
 				}
 			}
+		case "esc":
+			return initialModel(), nil
 		}
 	}
 	return m, nil
@@ -139,11 +143,14 @@ func (m boardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.cardList[m.cursor].Title == p.Title {
 
 					n := cardModel{
-						card: p,
+						board: m,
+						card:  p,
 					}
 					return n, nil
 				}
 			}
+		case "esc":
+			return m.project, nil
 		}
 	}
 	return m, nil
@@ -175,6 +182,8 @@ func (m cardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// 			return n, nil
 			// 		}
 			// 	}
+		case "esc":
+			return m.board, nil
 		}
 	}
 	return m, nil
@@ -249,6 +258,7 @@ func (m cardModel) View() string { // works actually
 }
 
 func Run() {
+	db = dataHandle.NewConndb()
 	p := tea.NewProgram(initialModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("err, you fucked up: %v", err)
