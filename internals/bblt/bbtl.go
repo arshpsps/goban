@@ -5,11 +5,26 @@ import (
 	"fmt"
 	"goban/internals/dataHandle"
 	"os"
+	"strings"
 
+	"github.com/charmbracelet/bubbles/cursor"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 var db dataHandle.DBConn
+var (
+	focusedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+	blurredStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
+	cursorStyle         = focusedStyle.Copy()
+	noStyle             = lipgloss.NewStyle()
+	helpStyle           = blurredStyle.Copy()
+	cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
+
+	focusedButton = focusedStyle.Copy().Render("[ Submit ]")
+	blurredButton = fmt.Sprintf("[ %s ]", blurredStyle.Render("Submit"))
+)
 
 type model struct {
 	projectList []dataHandle.Project
@@ -31,9 +46,11 @@ type boardModel struct {
 }
 
 type cardModel struct {
-	card   dataHandle.Card
-	board  boardModel
-	cursor int
+	inputs     []textinput.Model
+	board      boardModel
+	card       dataHandle.Card
+	focusIndex int
+	cursorMode cursor.Mode
 }
 
 func initialModel() model {
@@ -55,7 +72,7 @@ func (m boardModel) Init() tea.Cmd {
 }
 
 func (m cardModel) Init() tea.Cmd {
-	return nil
+	return textinput.Blink
 }
 
 func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -143,9 +160,30 @@ func (m boardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.cardList[m.cursor].Title == p.Title {
 
 					n := cardModel{
-						board: m,
-						card:  p,
+						inputs: make([]textinput.Model, 2),
+						board:  m,
+						card:   p,
 					}
+
+					var t textinput.Model
+					for i := range n.inputs {
+						t = textinput.New()
+						t.Cursor.Style = cursorStyle
+						t.CharLimit = 32
+						switch i {
+						case 0:
+							t.Placeholder = n.card.Title
+							t.Focus()
+							t.PromptStyle = focusedStyle
+							t.TextStyle = focusedStyle
+						case 1:
+							t.Placeholder = n.card.Description
+							t.CharLimit = 64
+						}
+
+						n.inputs[i] = t
+					}
+
 					return n, nil
 				}
 			}
@@ -162,31 +200,77 @@ func (m cardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+			// Change cursor mode
+		case "ctrl+r":
+			m.cursorMode++
+			if m.cursorMode > cursor.CursorHide {
+				m.cursorMode = cursor.CursorBlink
+			}
+			cmds := make([]tea.Cmd, len(m.inputs))
+			for i := range m.inputs {
+				cmds[i] = m.inputs[i].Cursor.SetMode(m.cursorMode)
+			}
+			return m, tea.Batch(cmds...)
 
-		case "up", "k":
-			if m.cursor > 0 {
-				m.cursor--
+		// Set focus to next input
+		case "tab", "shift+tab", "enter", "up", "down":
+			s := msg.String()
+
+			// Did the user press enter while the submit button was focused?
+			// If so, exit.
+			if s == "enter" && m.focusIndex == len(m.inputs) {
+				return m, tea.Quit
 			}
-		case "down", "j":
-			if m.cursor < 2 {
-				m.cursor++
+
+			// Cycle indexes
+			if s == "up" || s == "shift+tab" {
+				m.focusIndex--
+			} else {
+				m.focusIndex++
 			}
-			// case "enter", " ":
-			// 	for _, p := range m.cardList {
-			// 		if m.cardList[m.cursor].Title == p.Title {
-			//
-			// 			n := projModel{
-			// 				// project:   p,
-			// 				boardList: db.GetBoardsInProject(int(p.ID)),
-			// 			}
-			// 			return n, nil
-			// 		}
-			// 	}
+
+			if m.focusIndex > len(m.inputs) {
+				m.focusIndex = 0
+			} else if m.focusIndex < 0 {
+				m.focusIndex = len(m.inputs)
+			}
+
+			cmds := make([]tea.Cmd, len(m.inputs))
+			for i := 0; i <= len(m.inputs)-1; i++ {
+				if i == m.focusIndex {
+					// Set focused state
+					cmds[i] = m.inputs[i].Focus()
+					m.inputs[i].PromptStyle = focusedStyle
+					m.inputs[i].TextStyle = focusedStyle
+					continue
+				}
+				// Remove focused state
+				m.inputs[i].Blur()
+				m.inputs[i].PromptStyle = noStyle
+				m.inputs[i].TextStyle = noStyle
+			}
+
+			return m, tea.Batch(cmds...)
+
 		case "esc":
 			return m.board, nil
 		}
 	}
-	return m, nil
+	// Handle character input and blinking
+	cmd := m.updateInputs(msg)
+	return m, cmd
+}
+
+func (m *cardModel) updateInputs(msg tea.Msg) tea.Cmd {
+	cmds := make([]tea.Cmd, len(m.inputs))
+
+	// Only text inputs with Focus() set will respond, so it's safe to simply
+	// update all of them here without any further logic.
+	for i := range m.inputs {
+		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
+	}
+
+	return tea.Batch(cmds...)
 }
 
 func (n boardModel) View() string {
@@ -235,26 +319,26 @@ func (m model) View() string {
 }
 
 func (m cardModel) View() string { // works actually
-	s := "Which option to select, uwu?\n\n"
-	cursor := " "
-	if m.cursor == 0 {
-		cursor = ">"
-	}
-	s += fmt.Sprintf("%s %s\n", cursor, m.card.Title)
-	cursor = " "
-	if m.cursor == 1 {
-		cursor = ">"
-	}
-	s += fmt.Sprintf("%s %s\n", cursor, m.card.Description)
-	cursor = " "
-	if m.cursor == 2 {
-		cursor = ">"
-	}
-	s += fmt.Sprintf("%s %s\n", cursor, string(rune(m.card.Status)))
+	var b strings.Builder
 
-	s += "\nPress q to quit.\n"
+	for i := range m.inputs {
+		b.WriteString(m.inputs[i].View())
+		if i < len(m.inputs)-1 {
+			b.WriteRune('\n')
+		}
+	}
 
-	return s
+	button := &blurredButton
+	if m.focusIndex == len(m.inputs) {
+		button = &focusedButton
+	}
+	fmt.Fprintf(&b, "\n\n%s\n\n", *button)
+
+	b.WriteString(helpStyle.Render("cursor mode is "))
+	b.WriteString(cursorModeHelpStyle.Render(m.cursorMode.String()))
+	b.WriteString(helpStyle.Render(" (ctrl+r to change style)"))
+
+	return b.String()
 }
 
 func Run() {
