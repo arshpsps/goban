@@ -98,3 +98,7 @@ func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 	dbconn.db.Model(&cards).Where("board_id = ?", id).Find(&cards)
 	return cards
 }
+
+func UpdateView(inp []string){
+    fmt.Println(inp)
+}
