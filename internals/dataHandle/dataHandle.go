@@ -99,6 +99,6 @@ func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 	return cards
 }
 
-func UpdateView(inp []string){
-    fmt.Println(inp)
+func (card Card) Update(inp []string) {
+	fmt.Println(inp)
 }
