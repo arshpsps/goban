@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
-
-var dsn string = "root:@tcp(127.0.0.1:3306)/goban?charset=utf8mb4&parseTime=True&loc=Local"
 
 type Card struct {
 	gorm.Model
@@ -30,21 +27,6 @@ type Project struct {
 	gorm.Model
 	Name string
 	ID   uint
-}
-
-type DBConn struct {
-	db *gorm.DB
-}
-
-func NewConndb() DBConn {
-	var err error
-	db := DBConn{}
-	db.db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Error: %s", err)
-	}
-	fmt.Println("Connection Successful!")
-	return db
 }
 
 func (dbconn *DBConn) CreateTables() {
@@ -99,6 +81,6 @@ func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 	return cards
 }
 
-func (card Card) Update(inp []string) {
+func (card Card) UpdateItemInDB(inp []string) {
 	fmt.Println(inp)
 }
