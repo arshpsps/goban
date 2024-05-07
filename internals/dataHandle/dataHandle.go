@@ -81,6 +81,6 @@ func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 	return cards
 }
 
-func (card Card) UpdateItemInDB(inp []string) {
-	fmt.Println(inp)
+func UpdateView(inp []string){
+    fmt.Println(inp)
 }

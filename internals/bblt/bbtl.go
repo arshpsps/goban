@@ -217,7 +217,7 @@ func (m cardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Did the user press enter while the submit button was focused?
 			// If so, exit.
 			if s == "enter" && m.focusIndex == len(m.inputs) {
-				m.card.UpdateItemInDB(inputsToStrs(m.inputs))
+				dataHandle.UpdateView(inputsToStrs(m.inputs))
 				return m, tea.Quit
 			}
 
