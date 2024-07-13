@@ -2,8 +2,10 @@ package main
 
 import "goban/internals/bblt"
 
+// import "goban/internals/dataHandle"
+
 func main() {
 	bblt.Run()
-	// db := dataHandle.Conndb()
-	// db.GetAllProjects()
+	// db := dataHandle.NewConndb()
+	//    db.CreateTables()
 }

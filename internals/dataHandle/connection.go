@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +20,7 @@ type DBConn struct {
 func NewConndb() DBConn {
 	var err error
 	db := DBConn{}
-	db.db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db.db, err = gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Error: %s", err)
 	}
