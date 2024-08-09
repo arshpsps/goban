@@ -45,6 +45,10 @@ func (dbconn *DBConn) CreateTables() {
 	}
 }
 
+func (dbconn *DBConn) Insert(item *Project) {
+	dbconn.db.Create(item)
+}
+
 func (dbconn *DBConn) GetAllProjects() []Project {
 	var projects []Project
 	dbconn.db.Find(&projects)
@@ -81,6 +85,6 @@ func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 	return cards
 }
 
-func UpdateView(inp []string){
-    fmt.Println(inp)
+func UpdateView(inp []string) {
+	fmt.Println(inp)
 }
