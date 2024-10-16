@@ -125,14 +125,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter", " ":
-			for _, p := range m.projectList {
-				if m.projectList[m.cursor].Name == p.Name {
+			if m.cursor < len(m.projectList) {
+				for _, p := range m.projectList {
+					if m.projectList[m.cursor].Name == p.Name {
 
-					n := projModel{
-						project:   p,
-						boardList: db.GetBoardsInProject(int(p.ID)),
+						n := projModel{
+							project:   p,
+							boardList: db.GetBoardsInProject(int(p.ID)),
+						}
+						return n, nil
 					}
-					return n, nil
 				}
 			}
 		}
@@ -306,17 +308,17 @@ func (m model) View() string {
 	cursor := " "
 	s := "Which option to select, uwu?\n\n"
 	for i, choice := range m.projectList {
-        cursor = " "
+		cursor = " "
 		if m.cursor == i {
 			cursor = ">"
 		}
 		s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
 	}
-    cursor = " "
-    if m.cursor == len(m.projectList) {
-        cursor = ">"
-    }
-    s += fmt.Sprintf("%s %s\n", cursor, "[ Create New Project ]")
+	cursor = " "
+	if m.cursor == len(m.projectList) {
+		cursor = ">"
+	}
+	s += fmt.Sprintf("%s %s\n", cursor, "[ Create New Project ]")
 
 	s += "\nPress q to quit.\n"
 
