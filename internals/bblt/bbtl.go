@@ -121,7 +121,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down", "j":
-			if m.cursor < len(m.projectList)-1 {
+			if m.cursor < len(m.projectList) { // -1 on the length if removing the input wala TextBox
 				m.cursor++
 			}
 		case "enter", " ":
@@ -306,11 +306,13 @@ func (m model) View() string {
 	cursor := " "
 	s := "Which option to select, uwu?\n\n"
 	for i, choice := range m.projectList {
+        cursor = " "
 		if m.cursor == i {
 			cursor = ">"
 		}
 		s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
 	}
+    cursor = " "
     if m.cursor == len(m.projectList) {
         cursor = ">"
     }
