@@ -87,4 +87,9 @@ func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 
 func UpdateView(inp []string) {
 	fmt.Println(inp)
+    fmt.Println(len(inp))
+}
+
+func (DBConn *DBConn)UpdateCard(card Card){
+    DBConn.db.Save(&card)
 }

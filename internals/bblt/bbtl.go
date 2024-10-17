@@ -53,6 +53,10 @@ type cardModel struct {
 	cursorMode cursor.Mode
 }
 
+type creationModel struct {
+	inputs []textinput.Model
+}
+
 func initialModel() model {
 	return model{
 		projectList: db.GetAllProjects(),
@@ -219,8 +223,17 @@ func (m cardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Did the user press enter while the submit button was focused?
 			// If so, exit.
 			if s == "enter" && m.focusIndex == len(m.inputs) {
-				dataHandle.UpdateView(inputsToStrs(m.inputs))
-				return m, tea.Quit
+				inps := inputsToStrs(m.inputs)
+				if len(inps[0]) > 0 {
+					m.card.Title = inps[0]
+				}
+				if len(inps[1]) > 0 {
+					m.card.Description = inps[1]
+				}
+
+				db.UpdateCard(m.card)
+
+				return m.board, nil
 			}
 
 			// Cycle indexes
