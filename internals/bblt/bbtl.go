@@ -53,8 +53,20 @@ type cardModel struct {
 	cursorMode cursor.Mode
 }
 
-type creationModel struct {
-	inputs []textinput.Model
+type createProjModel struct {
+	inputs     []textinput.Model
+	rootModel  model
+	newModel   dataHandle.Project
+	focusIndex int
+	cursorMode cursor.Mode
+}
+
+type createBoardModel struct {
+	inputs     []textinput.Model
+	rootModel  projModel
+	newModel   dataHandle.Board
+	focusIndex int
+	cursorMode cursor.Mode
 }
 
 func initialModel() model {
