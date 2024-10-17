@@ -64,7 +64,7 @@ type createProjModel struct {
 type createBoardModel struct {
 	inputs     []textinput.Model
 	rootModel  projModel
-	newModel   dataHandle.Board
+	newModel   dataHandle.Board // struct{}
 	focusIndex int
 	cursorMode cursor.Mode
 }
