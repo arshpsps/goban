@@ -54,9 +54,9 @@ type cardModel struct {
 }
 
 type createProjModel struct {
+	newModel   dataHandle.Project
 	inputs     []textinput.Model
 	rootModel  model
-	newModel   dataHandle.Project
 	focusIndex int
 	cursorMode cursor.Mode
 }
