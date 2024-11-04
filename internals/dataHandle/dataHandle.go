@@ -7,6 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
+type DataHandler interface {
+	Insert(item *Project)
+	UpdateCard(card Card)
+	GetCardsInProject(id int) []Card
+	GetAllProjects() []Project
+	GetBoardsInProject(id int) []Board
+	GetCard(id int) Card
+	GetBoard(id int) Board
+	GetProject(id int) Project
+}
+
 type Card struct {
 	gorm.Model
 	Title       string
@@ -87,9 +98,9 @@ func (dbconn *DBConn) GetCardsInProject(id int) []Card {
 
 func UpdateView(inp []string) {
 	fmt.Println(inp)
-    fmt.Println(len(inp))
+	fmt.Println(len(inp))
 }
 
-func (DBConn *DBConn)UpdateCard(card Card){
-    DBConn.db.Save(&card)
+func (DBConn *DBConn) UpdateCard(card Card) {
+	DBConn.db.Save(&card)
 }

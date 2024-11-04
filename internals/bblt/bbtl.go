@@ -13,7 +13,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var db dataHandle.DBConn
+var db dataHandle.DataHandler
 var (
 	focusedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 	blurredStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
@@ -370,7 +370,8 @@ func (m cardModel) View() string { // works actually
 }
 
 func Run() {
-	db = dataHandle.NewConndb()
+	dbConn := dataHandle.NewConndb()
+	db = &dbConn
 	p := tea.NewProgram(initialModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("err, you fucked up: %v", err)
