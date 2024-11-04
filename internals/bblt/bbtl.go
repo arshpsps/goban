@@ -13,6 +13,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+
 var db dataHandle.DataHandler
 var (
 	focusedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
@@ -112,6 +113,7 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 					n := boardModel{
 						board:    p,
+
 						project:  m,
 						cardList: db.GetCardsInProject(int(p.ID)),
 					}
@@ -159,6 +161,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m boardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
