@@ -18,6 +18,7 @@ type DBConn struct {
 }
 
 func NewConndb() DBConn {
+    fmt.Println("hey")
 	var err error
 	db := DBConn{}
 	db.db, err = gorm.Open(sqlite.Open("data/gorm.db"), &gorm.Config{})
