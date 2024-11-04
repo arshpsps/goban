@@ -4,13 +4,12 @@ import (
 	// "github.com/charmbracelet/bubbles/list"
 	"fmt"
 	"goban/internals/dataHandle"
-	"goban/internals/kanban"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var data dataHandle.JsonData = kanban.GrabJsonObj()
+var data dataHandle.JsonData = dataHandle.GrabJsonObj()
 
 type model struct {
 	projectList []dataHandle.Project
@@ -68,7 +67,7 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.boardList[m.cursor].Name == p.Name {
 
 					n := boardModel{
-						board:   p,
+						board:    p,
 						cardList: p.Cards,
 					}
 					return n, nil
@@ -111,12 +110,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m boardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    return m, nil;
+	return m, nil
 }
 
 func (n boardModel) View() string {
-    s := ""
-    return s
+	s := ""
+	return s
 }
 
 func (n projModel) View() string {
