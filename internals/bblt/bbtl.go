@@ -373,7 +373,7 @@ func (m cardModel) View() string { // works actually
 }
 
 func Run() {
-	dbConn := dataHandle.NewConndb()
+	dbConn := dataHandle.NewSqliteConndb()
 	db = &dbConn
 	p := tea.NewProgram(initialModel())
 	if _, err := p.Run(); err != nil {
