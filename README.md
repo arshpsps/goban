@@ -9,6 +9,7 @@ This app uses [bubbletea](https://github.com/charmbracelet/bubbletea) for TUI. (
 ##### 1. GNU Make
 
 `make` to run without building
+
 `make build` to compile in builds/out
 
 ##### 2. Docker
@@ -17,6 +18,7 @@ This app uses [bubbletea](https://github.com/charmbracelet/bubbletea) for TUI. (
 > A GitHub Issue regarding how to fix it would be much appreciated.
 
 `docker build --tag 'goban' .`
+
 `docker run -t 'goban'`
 
 ---
