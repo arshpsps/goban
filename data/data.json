@@ -2,7 +2,6 @@
   "projects": [
     {
       "name": "project1",
-      "created_on": 20240209,
       "boards": [
         {
           "name": "board1",
@@ -10,8 +9,7 @@
             {
               "title": "card1",
               "description": "this is the first card",
-              "status": 1,
-              "tags": ["tag1"]
+              "status": 1
             }
           ]
         }
@@ -20,7 +18,6 @@
 
     {
       "name": "project2",
-      "created_on": 20240313,
       "boards": [
         {
           "name": "board1",
@@ -28,8 +25,7 @@
             {
               "title": "card1",
               "description": "this is the second card",
-              "status": 1,
-              "tags": ["tag1"]
+              "status": 1
             }
           ]
         }

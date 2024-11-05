@@ -12,6 +12,10 @@ type JsonData struct {
 	Projects []Project
 }
 
+type JsonConn struct {
+	file *os.File
+}
+
 func JsonRead(data string) JsonData {
 	var jsonData JsonData
 	if !json.Valid([]byte(data)) {
@@ -46,3 +50,12 @@ func GrabJsonObj() JsonData {
 
 	return JsonRead(data)
 }
+
+func (conn *JsonConn) Insert(item *Project)
+func (conn *JsonConn) UpdateCard(card Card)
+func (conn *JsonConn) GetCardsInProject(id int) []Card
+func (conn *JsonConn) GetAllProjects() []Project
+func (conn *JsonConn) GetBoardsInProject(id int) []Board
+func (conn *JsonConn) GetCard(id int) Card
+func (conn *JsonConn) GetBoard(id int) Board
+func (conn *JsonConn) GetProject(id int) Project
