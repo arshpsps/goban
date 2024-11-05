@@ -23,3 +23,23 @@ type Project struct {
 	Name string
 	ID   uint
 }
+
+type JsonRoot struct {
+	Projects []JsonProject
+}
+
+type JsonProject struct {
+	Name   string
+	Boards []JsonBoard
+}
+
+type JsonBoard struct {
+	Name  string
+	Cards []JsonCard
+}
+
+type JsonCard struct {
+	Name        string
+	Description string
+	Status      int
+}
