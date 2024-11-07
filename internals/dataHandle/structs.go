@@ -1,9 +1,10 @@
 package dataHandle
 
-import "gorm.io/gorm"
+type GlobalCard[t Card| JsonCard] struct {
+    modelToUse t
+}
 
 type Card struct {
-	gorm.Model
 	Title       string
 	Description string
 	ID          uint
@@ -12,14 +13,12 @@ type Card struct {
 }
 
 type Board struct {
-	gorm.Model
 	Name      string
 	ID        uint
 	ProjectID uint `gorm:"foreignKey"`
 }
 
 type Project struct {
-	gorm.Model
 	Name string
 	ID   uint
 }
