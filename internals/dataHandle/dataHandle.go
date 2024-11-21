@@ -12,5 +12,3 @@ type DataHandler interface {
 }
 
 // TODO: something similar to an interface but for data / struct. example: a Card struct without a gorm.Model field OR a monad of some sort
-//
-// TODO: config file, data location (recent, saved, fixed)

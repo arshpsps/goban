@@ -9,3 +9,5 @@ func main() {
 	// db := dataHandle.NewConndb()
 	//    db.CreateTables()
 }
+
+// TODO: Entry setups && config file, data location (recent, saved, fixed)
