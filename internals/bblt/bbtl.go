@@ -107,13 +107,13 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter", " ":
-			for _, p := range m.boardList {
-				if m.boardList[m.cursor].Name == p.Name {
+			for _, b := range m.boardList {
+				if m.boardList[m.cursor].Name == b.Name {
 
 					n := boardModel{
-						board:    p,
+						board:    b,
 						project:  m,
-						cardList: db.GetCardsInBoard(int(p.ID)),
+						cardList: db.GetCardsInBoard(int(b.ID)),
 					}
 					return n, nil
 				}
