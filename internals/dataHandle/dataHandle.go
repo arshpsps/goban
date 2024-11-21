@@ -3,7 +3,7 @@ package dataHandle
 type DataHandler interface {
 	Insert(item *Project)
 	UpdateCard(card Card)
-	GetCardsInProject(id int) []Card
+	GetCardsInBoard(id int) []Card
 	GetAllProjects() []Project
 	GetBoardsInProject(id int) []Board
 	GetCard(id int) Card

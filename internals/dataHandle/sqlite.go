@@ -74,7 +74,7 @@ func (dbconn *DBConn) GetBoardsInProject(id int) []Board {
 	return boards
 }
 
-func (dbconn *DBConn) GetCardsInProject(id int) []Card {
+func (dbconn *DBConn) GetCardsInBoard(id int) []Card {
 	var cards []Card
 	dbconn.db.Model(&cards).Where("board_id = ?", id).Find(&cards)
 	return cards
