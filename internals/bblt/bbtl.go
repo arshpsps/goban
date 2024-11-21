@@ -244,6 +244,7 @@ func (m cardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				db.UpdateCard(m.card)
+				m.board.cardList = db.GetCardsInBoard(int(m.board.board.ID))
 
 				return m.board, nil
 			}
