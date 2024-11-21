@@ -35,6 +35,7 @@ type model struct {
 type projModel struct {
 	boardList []dataHandle.Board
 	project   dataHandle.Project
+	model     model
 	cursor    int
 }
 
@@ -47,24 +48,24 @@ type boardModel struct {
 
 type cardModel struct {
 	inputs     []textinput.Model
-	board      boardModel
 	card       dataHandle.Card
+	board      boardModel
 	focusIndex int
 	cursorMode cursor.Mode
 }
 
 type createProjModel struct {
 	newModel   dataHandle.Project
-	inputs     []textinput.Model
+	input      textinput.Model
 	rootModel  model
 	focusIndex int
 	cursorMode cursor.Mode
 }
 
 type createBoardModel struct {
-	inputs     []textinput.Model
+	input      textinput.Model
+	newModel   dataHandle.Board
 	rootModel  projModel
-	newModel   dataHandle.Board // struct{}
 	focusIndex int
 	cursorMode cursor.Mode
 }
@@ -88,6 +89,14 @@ func (m boardModel) Init() tea.Cmd {
 }
 
 func (m cardModel) Init() tea.Cmd {
+	return textinput.Blink
+}
+
+func (m createProjModel) Init() tea.Cmd {
+	return textinput.Blink
+}
+
+func (m createBoardModel) Init() tea.Cmd {
 	return textinput.Blink
 }
 
@@ -119,7 +128,7 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "esc":
-			return initialModel(), nil
+			return m.model, nil
 		}
 	}
 	return m, nil
@@ -147,6 +156,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 						n := projModel{
 							project:   p,
+							model:     m,
 							boardList: db.GetBoardsInProject(int(p.ID)),
 						}
 						return n, nil
