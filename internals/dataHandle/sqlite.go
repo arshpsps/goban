@@ -44,6 +44,10 @@ func (dbconn *DBConn) Insert(item *Project) {
 	dbconn.db.Create(item)
 }
 
+func (dbconn *DBConn) InsertBoard(item *Board) {
+	dbconn.db.Create(item)
+}
+
 func (dbconn *DBConn) GetAllProjects() []Project {
 	var projects []Project
 	dbconn.db.Find(&projects)
@@ -68,9 +72,9 @@ func (dbconn *DBConn) GetCard(id int) Card {
 	return card
 }
 
-func (dbconn *DBConn) GetBoardsInProject(id int) []Board {
+func (dbconn *DBConn) GetBoardsInProject(id uint) []Board {
 	var boards []Board
-	dbconn.db.Model(&boards).Where("project_id = ?", id).Find(&boards)
+	dbconn.db.Model(&boards).Where("project_id = ?", int(id)).Find(&boards)
 	return boards
 }
 

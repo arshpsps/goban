@@ -55,9 +55,9 @@ type cardModel struct {
 }
 
 type createProjModel struct {
-	newModel   dataHandle.Project
+	newModel   interface{}
+	rootModel  tea.Model
 	inputs     []textinput.Model
-	rootModel  model
 	focusIndex int
 	cursorMode cursor.Mode
 }
@@ -113,20 +113,46 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down", "j":
-			if m.cursor < len(m.boardList)-1 {
+			if m.cursor < len(m.boardList) {
 				m.cursor++
 			}
 		case "enter", " ":
-			for _, b := range m.boardList {
-				if m.boardList[m.cursor].Name == b.Name {
+			if m.cursor < len(m.boardList) {
+				for _, b := range m.boardList {
+					if m.boardList[m.cursor].Name == b.Name {
 
-					n := boardModel{
-						board:    b,
-						project:  m,
-						cardList: db.GetCardsInBoard(int(b.ID)),
+						n := boardModel{
+							board:    b,
+							project:  m,
+							cardList: db.GetCardsInBoard(int(b.ID)),
+						}
+						return n, nil
 					}
-					return n, nil
 				}
+			} else if m.cursor == len(m.boardList) {
+				n := createProjModel{
+					inputs:    make([]textinput.Model, 1),
+					rootModel: m,
+				}
+
+				var t textinput.Model
+				for i := range n.inputs {
+					t = textinput.New()
+					t.Cursor.Style = cursorStyle
+					t.CharLimit = 32
+					switch i {
+					case 0:
+						t.Placeholder = "Board Title"
+						t.Focus()
+						t.PromptStyle = focusedStyle
+						t.TextStyle = focusedStyle
+
+						n.inputs[i] = t
+					}
+				}
+
+				return n, nil
+
 			}
 		case "esc":
 			return m.model, nil
@@ -158,7 +184,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						n := projModel{
 							project:   p,
 							model:     m,
-							boardList: db.GetBoardsInProject(int(p.ID)),
+							boardList: db.GetBoardsInProject(p.ID),
 						}
 						return n, nil
 					}
@@ -340,13 +366,41 @@ func (m createProjModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// If so, exit.
 			if s == "enter" && m.focusIndex == len(m.inputs) {
 				inps := inputsToStrs(m.inputs)
-				m.newModel = dataHandle.Project{}
-				if len(inps[0]) > 0 {
-					m.newModel.Name = inps[0]
-				}
+				switch m.rootModel.(type) {
+				case model:
+					{
+						proj := dataHandle.Project{}
+						if len(inps[0]) > 0 {
+							proj.Name = inps[0]
+						}
 
-				db.Insert(&m.newModel)
-				m.rootModel.projectList = db.GetAllProjects()
+						db.Insert(&proj)
+						m.newModel = proj
+						root := m.rootModel.(model)
+						root.projectList = db.GetAllProjects()
+						m.rootModel = root
+					}
+
+				case projModel:
+					{
+						board := dataHandle.Board{}
+						if len(inps[0]) > 0 {
+							board.Name = inps[0]
+						}
+
+						root := m.rootModel.(projModel)
+
+                        board.ProjectID = root.project.ID
+						db.InsertBoard(&board)
+						m.newModel = board
+
+						root.boardList = db.GetBoardsInProject(root.project.ID)
+						m.rootModel = root
+					}
+
+				default:
+					fmt.Errorf("sorry")
+				}
 
 				return m.rootModel, nil
 			}
@@ -430,14 +484,21 @@ func (n boardModel) View() string {
 }
 
 func (n projModel) View() string {
+	cursor := " "
 	s := "Which option to select, uwu?\n\n"
 	for i, choice := range n.boardList {
-		cursor := " "
+		cursor = " "
 		if n.cursor == i {
 			cursor = ">"
 		}
 		s += fmt.Sprintf("%s %s\n", cursor, choice.Name)
 	}
+
+	cursor = " "
+	if n.cursor == len(n.boardList) {
+		cursor = ">"
+	}
+	s += fmt.Sprintf("%s %s\n", cursor, "[ Create New Board]")
 
 	s += "\nPress q to quit.\n"
 
