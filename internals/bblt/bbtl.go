@@ -124,7 +124,7 @@ func (m projModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						n := boardModel{
 							board:    b,
 							project:  m,
-							cardList: db.GetCardsInBoard(int(b.ID)),
+							cardList: db.GetCardsInBoard(b.ID),
 						}
 						return n, nil
 					}
@@ -306,7 +306,7 @@ func (m cardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				db.UpdateCard(m.card)
-				m.board.cardList = db.GetCardsInBoard(int(m.board.board.ID))
+				m.board.cardList = db.GetCardsInBoard(m.board.board.ID)
 
 				return m.board, nil
 			}
@@ -390,16 +390,33 @@ func (m createProjModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 						root := m.rootModel.(projModel)
 
-                        board.ProjectID = root.project.ID
+						board.ProjectID = root.project.ID
 						db.InsertBoard(&board)
 						m.newModel = board
 
 						root.boardList = db.GetBoardsInProject(root.project.ID)
 						m.rootModel = root
 					}
+				case boardModel:
+					{
+						card := dataHandle.Card{}
+						if len(inps[0]) > 0 {
+							card.Title = inps[0]
+							card.Description = inps[1]
+						}
+
+						root := m.rootModel.(boardModel)
+
+						card.BoardID = root.board.ID
+						db.InsertCard(&card)
+						m.newModel = card
+
+						root.cardList = db.GetCardsInBoard(root.board.ID)
+						m.rootModel = root
+					}
 
 				default:
-					fmt.Errorf("sorry")
+					fmt.Fprintln(os.Stderr, "sorry")
 				}
 
 				return m.rootModel, nil

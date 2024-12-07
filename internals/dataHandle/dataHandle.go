@@ -3,8 +3,9 @@ package dataHandle
 type DataHandler interface {
 	Insert(item *Project)
 	InsertBoard(item *Board)
+	InsertCard(item *Card)
 	UpdateCard(card Card)
-	GetCardsInBoard(id int) []Card
+	GetCardsInBoard(id uint) []Card
 	GetAllProjects() []Project
 	GetBoardsInProject(id uint) []Board
 	GetCard(id int) Card
